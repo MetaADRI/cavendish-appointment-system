@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officials Availability - Cavendish Appointment System</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="/logo-removebg-preview.png" alt="Cavendish Logo" height="40" class="me-2">
+                <span>Cavendish Appointments</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/availability">Availability</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/signup" class="btn btn-primary ms-2">Sign Up</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main style="margin-top: 80px; padding: 2rem 0; min-height: calc(100vh - 200px);" class="bg-cavendish-light">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="dashboard-header text-white p-4 mb-4 fade-in">
+                <h1 class="fw-bold mb-2"><i class="bi bi-calendar-week me-2"></i>Officials Availability</h1>
+                <p class="mb-0">View when our university officials are available for appointments</p>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="alert alert-info mb-4 fade-in" role="alert">
+                <i class="bi bi-info-circle me-2"></i>
+                Ready to book an appointment? <a href="/login" class="alert-link fw-bold">Login here</a> to get started!
+            </div>
+
+            <!-- Officials Availability List -->
+            <div id="availabilityContainer">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Loading officials availability...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer text-center">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 Cavendish University Zambia. All rights reserved.</p>
+            <p class="text-muted mt-2">Empowering Education Through Innovation</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Fetch and display officials availability
+        async function loadOfficialsAvailability() {
+            try {
+                const response = await fetch('/api/public/officials/availability');
+                if (response.ok) {
+                    const data = await response.json();
+                    displayOfficialsAvailability(data.officials);
+                } else {
+                    document.getElementById('availabilityContainer').innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Failed to load availability. Please try again later.
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading availability:', error);
+                document.getElementById('availabilityContainer').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Network error. Please check your connection and try again.
+                    </div>
+                `;
+            }
+        }
+
+        function displayOfficialsAvailability(officials) {
+            const container = document.getElementById('availabilityContainer');
+            
+            if (officials.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+                        <p class="mt-3 text-muted">No officials available at the moment.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+            container.innerHTML = `
+                <div class="row g-4">
+                    ${officials.map((official, index) => `
+                        <div class="col-md-6 col-lg-4 slide-in-left" style="animation-delay: ${index * 0.1}s;">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="feature-icon me-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="card-title mb-1 text-cavendish-navy">${official.full_name}</h5>
+                                            ${official.title ? `<p class="text-muted small mb-0">${official.title}</p>` : ''}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <small class="text-muted">
+                                            <i class="bi bi-envelope me-1"></i>${official.email}
+                                        </small>
+                                    </div>
+
+                                    <hr>
+
+                                    <div>
+                                        <h6 class="text-cavendish-navy mb-2">
+                                            <i class="bi bi-calendar-check me-1"></i>Available Days
+                                        </h6>
+                                        ${official.available_days.length > 0 ? `
+                                            <div class="d-flex flex-wrap gap-1">
+                                                ${daysOfWeek.map(day => {
+                                                    const isAvailable = official.available_days.includes(day);
+                                                    return `
+                                                        <span class="badge ${isAvailable ? 'bg-success' : 'bg-secondary'}" 
+                                                              style="font-size: 0.7rem; opacity: ${isAvailable ? '1' : '0.3'};">
+                                                            ${day.substring(0, 3)}
+                                                        </span>
+                                                    `;
+                                                }).join('')}
+                                            </div>
+                                            <div class="mt-2">
+                                                <small class="text-success">
+                                                    <i class="bi bi-check-circle me-1"></i>
+                                                    Available on ${official.available_days.join(', ')}
+                                                </small>
+                                            </div>
+                                        ` : `
+                                            <p class="text-muted small mb-0">
+                                                <i class="bi bi-info-circle me-1"></i>
+                                                No availability set yet
+                                            </p>
+                                        `}
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-white border-top-0">
+                                    <a href="/login" class="btn btn-primary btn-sm w-100">
+                                        <i class="bi bi-calendar-plus me-1"></i>Book Appointment
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Load availability on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOfficialsAvailability();
+        });
+    </script>
+</body>
+</html>

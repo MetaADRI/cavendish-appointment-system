@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Cavendish Appointment System</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <img src="/logo-removebg-preview.png" alt="Cavendish Logo" style="max-width: 120px; margin-bottom: 1rem;">
+                <h2>Cavendish Appointments</h2>
+                <p class="subtitle">Create your student account</p>
+            </div>
+            
+            <div id="alert" class="alert" style="display: none;" role="alert"></div>
+            
+            <form id="signupForm">
+                <div class="mb-3">
+                    <label for="full_name" class="form-label">Full Name</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input type="text" class="form-control" id="full_name" name="full_name" placeholder="Enter your full name" required>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="student_number" class="form-label">Student Number</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-hash"></i></span>
+                        <input type="text" class="form-control" id="student_number" name="student_number" placeholder="Enter your student number" required>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Create a password" minlength="6" required>
+                    </div>
+                    <small class="form-text text-muted">Must be at least 6 characters</small>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="confirm_password" class="form-label">Confirm Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-100" id="signupBtn">
+                    <span id="btnText">Create Account</span>
+                    <span id="btnSpinner" style="display: none;">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Creating account...
+                    </span>
+                </button>
+            </form>
+            
+            <div class="text-center mt-4">
+                <p class="mb-2">Already have an account? <a href="/login" class="text-cavendish-navy fw-semibold">Login here</a></p>
+                <p><a href="/" class="text-muted"><i class="bi bi-arrow-left"></i> Back to Home</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const full_name = document.getElementById('full_name').value;
+            const student_number = document.getElementById('student_number').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirm_password = document.getElementById('confirm_password').value;
+            const signupBtn = document.getElementById('signupBtn');
+            const btnText = document.getElementById('btnText');
+            const btnSpinner = document.getElementById('btnSpinner');
+            const alert = document.getElementById('alert');
+            
+            // Validate passwords match
+            if (password !== confirm_password) {
+                showAlert('Passwords do not match', 'error');
+                return;
+            }
+            
+            // Show loading state
+            signupBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnSpinner.style.display = 'inline-block';
+            alert.style.display = 'none';
+            
+            try {
+                const requestBody = { full_name, student_number, email, password };
+                console.log('Sending signup request:', requestBody);
+                
+                const response = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                const data = await response.json();
+                console.log('Signup response:', response.status, data);
+                
+                if (response.ok) {
+                    showAlert(data.message, 'success');
+                    document.getElementById('signupForm').reset();
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                } else {
+                    console.error('Signup failed:', data);
+                    showAlert(data.error || 'Signup failed', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.', 'error');
+            } finally {
+                // Reset loading state
+                signupBtn.disabled = false;
+                btnText.style.display = 'inline-block';
+                btnSpinner.style.display = 'none';
+            }
+        });
+        
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

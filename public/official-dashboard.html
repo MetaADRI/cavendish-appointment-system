@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Dashboard - Cavendish Appointment System</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .status-in_progress { background-color: #ff9800; color: white; }
+        .status-completed { background-color: #28a745; color: white; }
+        .status-missed { background-color: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-light bg-white fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-cavendish-navy d-flex align-items-center" href="/official-dashboard">
+                <img src="/logo-removebg-preview.png" alt="Cavendish Logo" height="40" class="me-2">
+                <span>Cavendish Appointments</span>
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted"><i class="bi bi-person-circle me-1"></i><span id="userName">Loading...</span></span>
+                <button class="btn btn-outline-primary btn-sm" onclick="logout()">
+                    <i class="bi bi-box-arrow-right me-1"></i>Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main style="margin-top: 80px; padding: 2rem 0;" class="bg-cavendish-light">
+        <div class="container">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header text-white p-4 mb-4 fade-in">
+                <h1 class="fw-bold mb-2"><i class="bi bi-clipboard-check me-2"></i>Official Dashboard</h1>
+                <p class="mb-0">Manage appointment requests and view your schedule</p>
+            </div>
+
+            <div id="alert" class="alert" style="display: none;" role="alert"></div>
+
+            <!-- Tabs -->
+            <ul class="nav nav-tabs mb-4" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pendingAppointments" type="button" role="tab" onclick="switchTab('pendingAppointments')">
+                        <i class="bi bi-hourglass-split me-1"></i>Pending Requests
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="schedule-tab" data-bs-toggle="tab" data-bs-target="#mySchedule" type="button" role="tab" onclick="switchTab('mySchedule')">
+                        <i class="bi bi-calendar-check me-1"></i>My Schedule
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="availability-tab" data-bs-toggle="tab" data-bs-target="#myAvailability" type="button" role="tab" onclick="switchTab('myAvailability')">
+                        <i class="bi bi-calendar-week me-1"></i>Set Availability
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Pending Appointments Tab -->
+                <div class="tab-pane fade show active" id="pendingAppointments" role="tabpanel">
+                    <div class="card slide-in-left">
+                        <div class="card-body">
+                            <h2 class="card-title h4 mb-4 text-cavendish-navy">
+                                <i class="bi bi-clock-history me-2"></i>Pending Appointment Requests
+                            </h2>
+                            <div id="pendingAppointmentsList">
+                                <div class="text-center py-5 text-muted">
+                                    <div class="spinner-border" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-3">Loading pending appointments...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Schedule Tab -->
+                <div class="tab-pane fade" id="mySchedule" role="tabpanel">
+                    <div class="card slide-in-right">
+                        <div class="card-body">
+                            <h2 class="card-title h4 mb-4 text-cavendish-navy">
+                                <i class="bi bi-calendar3 me-2"></i>Approved Appointments
+                            </h2>
+                            <div id="approvedAppointmentsList">
+                                <div class="text-center py-5 text-muted">
+                                    <div class="spinner-border" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-3">Loading your schedule...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Availability Management Tab -->
+                <div class="tab-pane fade" id="myAvailability" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title h4 mb-4 text-cavendish-navy">
+                                <i class="bi bi-calendar-week me-2"></i>Set Your Weekly Availability
+                            </h2>
+                            <p class="text-muted mb-4">Select the days when you are available for appointments. Students will see your availability when booking.</p>
+                            
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold">Available Days</label>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input day-checkbox" type="checkbox" value="Sunday" id="daySunday">
+                                                <label class="form-check-label" for="daySunday">Sunday</label>
+                                            </div>
+                                            <div class="form-check ms-3">
+                                                <input class="form-check-input day-checkbox" type="checkbox" value="Monday" id="dayMonday">
+                                                <label class="form-check-label" for="dayMonday">Monday</label>
+                                            </div>
+                                            <div class="form-check ms-3">
+                                                <input class="form-check-input day-checkbox" type="checkbox" value="Tuesday" id="dayTuesday">
+                                                <label class="form-check-label" for="dayTuesday">Tuesday</label>
+                                            </div>
+                                            <div class="form-check ms-3">
+                                                <input class="form-check-input day-checkbox" type="checkbox" value="Wednesday" id="dayWednesday">
+                                                <label class="form-check-label" for="dayWednesday">Wednesday</label>
+                                            </div>
+                                            <div class="form-check ms-3">
+                                                <input class="form-check-input day-checkbox" type="checkbox" value="Thursday" id="dayThursday">
+                                                <label class="form-check-label" for="dayThursday">Thursday</label>
+                                            </div>
+                                            <div class="form-check ms-3">
+                                                <input class="form-check-input day-checkbox" type="checkbox" value="Friday" id="dayFriday">
+                                                <label class="form-check-label" for="dayFriday">Friday</label>
+                                            </div>
+                                            <div class="form-check ms-3">
+                                                <input class="form-check-input day-checkbox" type="checkbox" value="Saturday" id="daySaturday">
+                                                <label class="form-check-label" for="daySaturday">Saturday</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button class="btn btn-primary" onclick="saveAvailability()">
+                                        <i class="bi bi-save me-1"></i>Save Availability
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Slot Tracker Integration (NEW) -->
+    <script src="/slot-tracker.js"></script>
+
+    <script>
+        let currentUser = null;
+
+        // Check authentication and load user data
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/auth/me');
+                if (response.ok) {
+                    const data = await response.json();
+                    currentUser = data.user;
+                    if (currentUser.role !== 'official') {
+                        window.location.href = '/dashboard';
+                        return;
+                    }
+                    document.getElementById('userName').textContent = currentUser.full_name;
+                    loadPendingAppointments();
+                    loadApprovedAppointments();
+                    loadAvailability();
+                } else {
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                window.location.href = '/login';
+            }
+        }
+
+        function switchTab(tabName) {
+            // Bootstrap handles tab switching, this is just for additional logic if needed
+        }
+
+        // Load pending appointments
+        async function loadPendingAppointments() {
+            try {
+                const response = await fetch('/api/officials/me/appointments?status=pending');
+                if (response.ok) {
+                    const data = await response.json();
+                    displayPendingAppointments(data.appointments);
+                }
+            } catch (error) {
+                console.error('Error loading pending appointments:', error);
+            }
+        }
+
+        function displayPendingAppointments(appointments) {
+            const container = document.getElementById('pendingAppointmentsList');
+            
+            if (appointments.length === 0) {
+                container.innerHTML = '<div class="text-center py-4 text-muted"><i class="bi bi-inbox" style="font-size: 3rem;"></i><p class="mt-2">No pending appointment requests</p></div>';
+                return;
+            }
+
+            container.innerHTML = appointments.map(appointment => `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title text-cavendish-navy">${appointment.purpose}</h5>
+                                <p class="card-text text-muted mb-2">
+                                    <span class="badge bg-light text-dark me-2"><i class="bi bi-hash"></i> ${appointment.appointment_code}</span>
+                                    <span class="me-3"><i class="bi bi-person me-1"></i>${appointment.student_name}</span>
+                                    <span class="me-3"><i class="bi bi-calendar-event me-1"></i>${new Date(appointment.appointment_date).toLocaleDateString()}</span>
+                                    <span class="me-3"><i class="bi bi-clock me-1"></i>${appointment.appointment_time}</span>
+                                    <span class="me-3"><i class="bi bi-${appointment.mode === 'Virtual' ? 'camera-video' : 'building'} me-1"></i>${appointment.mode}</span>
+                                </p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-success btn-sm" onclick="updateAppointmentStatus(${appointment.id}, 'approved')">
+                                    <i class="bi bi-check-circle me-1"></i>Approve
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="updateAppointmentStatus(${appointment.id}, 'rejected')">
+                                    <i class="bi bi-x-circle me-1"></i>Reject
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Load approved appointments
+        async function loadApprovedAppointments() {
+            try {
+                const response = await fetch('/api/officials/me/appointments?status=approved');
+                if (response.ok) {
+                    const data = await response.json();
+                    displayApprovedAppointments(data.appointments);
+                }
+            } catch (error) {
+                console.error('Error loading approved appointments:', error);
+            }
+        }
+
+        function displayApprovedAppointments(appointments) {
+            const container = document.getElementById('approvedAppointmentsList');
+            
+            if (appointments.length === 0) {
+                container.innerHTML = '<div class="text-center py-4 text-muted"><i class="bi bi-inbox" style="font-size: 3rem;"></i><p class="mt-2">No approved appointments in your schedule</p></div>';
+                return;
+            }
+
+            container.innerHTML = appointments.map(appointment => `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title text-cavendish-navy">${appointment.purpose}</h5>
+                                <p class="card-text text-muted mb-2">
+                                    <span class="badge bg-light text-dark me-2"><i class="bi bi-hash"></i> ${appointment.appointment_code}</span>
+                                    <span class="me-3"><i class="bi bi-person me-1"></i>${appointment.student_name}</span>
+                                    <span class="me-3"><i class="bi bi-calendar-event me-1"></i>${new Date(appointment.appointment_date).toLocaleDateString()}</span>
+                                    <span class="me-3"><i class="bi bi-clock me-1"></i>${appointment.appointment_time}</span>
+                                    <span class="me-3"><i class="bi bi-${appointment.mode === 'Virtual' ? 'camera-video' : 'building'} me-1"></i>${appointment.mode}</span>
+                                </p>
+                            </div>
+                            <span class="badge bg-success">APPROVED</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update appointment status
+        async function updateAppointmentStatus(appointmentId, status) {
+            const action = status === 'approved' ? 'approve' : 'reject';
+            if (!confirm(`Are you sure you want to ${action} this appointment?`)) return;
+
+            try {
+                const response = await fetch(`/api/appointments/${appointmentId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status })
+                });
+
+                if (response.ok) {
+                    showAlert(`Appointment ${action}d successfully`, 'success');
+                    loadPendingAppointments();
+                    loadApprovedAppointments();
+                } else {
+                    const data = await response.json();
+                    showAlert(data.error || `Failed to ${action} appointment`, 'error');
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.', 'error');
+            }
+        }
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        async function logout() {
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+                window.location.href = '/';
+            } catch (error) {
+                window.location.href = '/';
+            }
+        }
+
+        // Load official's availability
+        async function loadAvailability() {
+            try {
+                const response = await fetch('/api/officials/me/availability');
+                if (response.ok) {
+                    const data = await response.json();
+                    // Check the boxes for saved days
+                    document.querySelectorAll('.day-checkbox').forEach(checkbox => {
+                        checkbox.checked = data.days.includes(checkbox.value);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading availability:', error);
+            }
+        }
+
+        // Save official's availability
+        async function saveAvailability() {
+            const selectedDays = Array.from(document.querySelectorAll('.day-checkbox:checked'))
+                .map(checkbox => checkbox.value);
+
+            try {
+                const response = await fetch('/api/officials/me/availability', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ days: selectedDays })
+                });
+
+                if (response.ok) {
+                    showAlert('Availability updated successfully!', 'success');
+                } else {
+                    const data = await response.json();
+                    showAlert(data.error || 'Failed to update availability', 'danger');
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.', 'danger');
+            }
+        }
+
+        // Make loadDashboardData global for slot tracker
+        window.loadDashboardData = function() {
+            loadPendingAppointments();
+            loadApprovedAppointments();
+            loadAvailability();
+        };
+
+        // Initialize dashboard
+        checkAuth();
+
+        // Initialize slot tracker (NEW - SLOT TRACKER)
+        setTimeout(() => {
+            if (currentUser) {
+                slotTracker.init(currentUser, (notification) => {
+                    // Refresh all data when new notification arrives
+                    loadDashboardData();
+                });
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

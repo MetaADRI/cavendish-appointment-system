@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Cavendish Appointment System</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .status-in_progress { background-color: #ff9800; color: white; }
+        .status-completed { background-color: #28a745; color: white; }
+        .status-missed { background-color: #dc3545; color: white; }
+        .notification-badge { position: absolute; top: -5px; right: -5px; }
+    </style>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c5530;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            background: #2c5530;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #1e3a23;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #2c5530;
+            color: #2c5530;
+        }
+
+        .btn-outline:hover {
+            background: #2c5530;
+            color: white;
+        }
+
+        main {
+            margin-top: 80px;
+            padding: 2rem 0;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .appointment-form {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #2c5530;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .appointments-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .appointment-item {
+            padding: 1.5rem;
+            border: 2px solid #e9ecef;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .appointment-info h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .appointment-meta {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-approved {
+            background: #d1edff;
+            color: #155724;
+        }
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .alert-success {
+            background: #d1edff;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .appointment-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-light bg-white fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-cavendish-navy d-flex align-items-center" href="/dashboard">
+                <img src="/logo-removebg-preview.png" alt="Cavendish Logo" height="40" class="me-2">
+                <span>Cavendish Appointments</span>
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted"><i class="bi bi-person-circle me-1"></i><span id="userName">Loading...</span></span>
+                <button class="btn btn-outline-primary btn-sm" onclick="logout()">
+                    <i class="bi bi-box-arrow-right me-1"></i>Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main style="margin-top: 80px; padding: 2rem 0;" class="bg-cavendish-light">
+        <div class="container">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header text-white p-4 mb-4 fade-in">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="fw-bold mb-2"><i class="bi bi-speedometer2 me-2"></i>Student Dashboard</h1>
+                        <p class="mb-0">Manage your appointments and track their status</p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <div id="userStatus"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="alert" class="alert" style="display: none;" role="alert"></div>
+
+            <!-- Notifications Panel (NEW - SLOT TRACKER) -->
+            <div class="card mb-4 fade-in" id="notificationsPanel" style="display: none;">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-bell me-2"></i>Notifications
+                        <span id="unreadCount" class="badge bg-danger ms-2">0</span>
+                    </h5>
+                </div>
+                <div class="card-body" id="notificationsList">
+                    <div class="text-center text-muted py-3">
+                        <i class="bi bi-bell-slash" style="font-size: 2rem;"></i>
+                        <p class="mt-2">No notifications</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Appointments Widget (NEW - SLOT TRACKER) -->
+            <div class="card mb-4 fade-in" id="upcomingPanel" style="display: none;">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clock-history me-2"></i>Upcoming Appointments (Next 24h)
+                    </h5>
+                </div>
+                <div class="card-body" id="upcomingList">
+                    <div class="text-center text-muted py-3">
+                        <i class="bi bi-calendar-x" style="font-size: 2rem;"></i>
+                        <p class="mt-2">No upcoming appointments</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Appointment Request Card -->
+            <div class="card mb-4 slide-in-left">
+                <div class="card-body">
+                    <h2 class="card-title h4 mb-4 text-cavendish-navy">
+                        <i class="bi bi-plus-circle me-2"></i>New Appointment Request
+                    </h2>
+                    <form id="appointmentForm">
+                        <div class="mb-3">
+                            <label for="official_id" class="form-label">Select Official</label>
+                            <select class="form-select" id="official_id" name="official_id" required>
+                                <option value="">Loading officials...</option>
+                            </select>
+                            <small class="form-text text-muted">Choose the official you want to meet with</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="purpose" class="form-label">Purpose of Meeting</label>
+                            <textarea class="form-control" id="purpose" name="purpose" rows="3" placeholder="Describe the purpose of your appointment..." required></textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="appointment_date" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="appointment_date" name="appointment_date" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="appointment_time" class="form-label">Time</label>
+                                <input type="time" class="form-control" id="appointment_time" name="appointment_time" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="mode" class="form-label">Meeting Mode</label>
+                            <select class="form-select" id="mode" name="mode" required>
+                                <option value="">Select mode</option>
+                                <option value="Virtual">Virtual</option>
+                                <option value="Physical">Physical</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <span id="btnText"><i class="bi bi-send me-2"></i>Request Appointment</span>
+                            <span id="btnSpinner" style="display: none;">
+                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                Submitting...
+                            </span>
+                        </button>
+                    </form>
+                    
+                    <div id="successMessage" class="alert alert-success mt-3 hidden" role="alert">
+                        <h5 class="alert-heading"><i class="bi bi-check-circle me-2"></i>Appointment Request Submitted!</h5>
+                        <p>Your appointment code: <strong id="appointmentCode"></strong></p>
+                        <hr>
+                        <p class="mb-0">Please wait for the official's response. You can track the status below.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Your Appointments Card -->
+            <div class="card slide-in-right">
+                <div class="card-body">
+                    <h2 class="card-title h4 mb-4 text-cavendish-navy">
+                        <i class="bi bi-calendar3 me-2"></i>Your Appointments
+                    </h2>
+                    <div id="appointmentsList">
+                        <div class="text-center py-5 text-muted">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-3">Loading appointments...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Slot Tracker Integration (NEW) -->
+    <script src="/slot-tracker.js"></script>
+
+    <script>
+        let currentUser = null;
+
+        // Check authentication and load user data
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/auth/me');
+                if (response.ok) {
+                    const data = await response.json();
+                    currentUser = data.user;
+                    document.getElementById('userName').textContent = currentUser.full_name;
+                    updateUserStatus();
+                    loadOfficials();
+                    loadAppointments();
+                } else {
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                window.location.href = '/login';
+            }
+        }
+
+        // Load active officials for dropdown
+        async function loadOfficials() {
+            try {
+                const response = await fetch('/api/students/officials');
+                if (response.ok) {
+                    const data = await response.json();
+                    populateOfficialsDropdown(data.officials);
+                }
+            } catch (error) {
+                console.error('Error loading officials:', error);
+            }
+        }
+
+        function populateOfficialsDropdown(officials) {
+            const select = document.getElementById('official_id');
+            
+            if (officials.length === 0) {
+                select.innerHTML = '<option value="">No officials available</option>';
+                return;
+            }
+
+            select.innerHTML = '<option value="">Select an official</option>' + 
+                officials.map(official => 
+                    `<option value="${official.id}">${official.full_name}${official.title ? ` - ${official.title}` : ''}</option>`
+                ).join('');
+        }
+
+        function updateUserStatus() {
+            const statusDiv = document.getElementById('userStatus');
+            if (currentUser.status === 'active') {
+                statusDiv.innerHTML = '<span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Account Active</span>';
+            } else {
+                statusDiv.innerHTML = '<span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>Waiting Admin Approval</span>';
+            }
+        }
+
+        // Load appointments
+        async function loadAppointments() {
+            try {
+                const response = await fetch('/api/students/me/appointments');
+                if (response.ok) {
+                    const data = await response.json();
+                    displayAppointments(data.appointments);
+                }
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+            }
+        }
+
+        function displayAppointments(appointments) {
+            const container = document.getElementById('appointmentsList');
+            
+            if (appointments.length === 0) {
+                container.innerHTML = '<div class="text-center py-4 text-muted"><i class="bi bi-inbox" style="font-size: 3rem;"></i><p class="mt-2">No appointments found</p></div>';
+                return;
+            }
+
+            const statusBadges = {
+                'pending': 'bg-secondary',
+                'approved': 'bg-success',
+                'rejected': 'bg-danger'
+            };
+
+            container.innerHTML = appointments.map(appointment => `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title text-cavendish-navy">${appointment.purpose}</h5>
+                                <p class="card-text text-muted mb-2">
+                                    <span class="badge bg-light text-dark me-2"><i class="bi bi-hash"></i> ${appointment.appointment_code}</span>
+                                    <span class="me-3"><i class="bi bi-calendar-event me-1"></i>${new Date(appointment.appointment_date).toLocaleDateString()}</span>
+                                    <span class="me-3"><i class="bi bi-clock me-1"></i>${appointment.appointment_time}</span>
+                                    <span class="me-3"><i class="bi bi-${appointment.mode === 'Virtual' ? 'camera-video' : 'building'} me-1"></i>${appointment.mode}</span>
+                                </p>
+                                <p class="mb-0"><i class="bi bi-person-badge me-1"></i><strong>Official:</strong> ${appointment.official_name}</p>
+                            </div>
+                            <span class="badge ${statusBadges[appointment.status]} ms-3">${appointment.status.toUpperCase()}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Handle appointment form submission
+        document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (currentUser.status !== 'active') {
+                showAlert('Your account is pending admin approval. You cannot book appointments yet.', 'error');
+                return;
+            }
+            
+            const formData = new FormData(this);
+            const data = {
+                official_id: formData.get('official_id'),
+                purpose: formData.get('purpose'),
+                appointment_date: formData.get('appointment_date'),
+                appointment_time: formData.get('appointment_time'),
+                mode: formData.get('mode')
+            };
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnSpinner = document.getElementById('btnSpinner');
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnSpinner.style.display = 'inline-block';
+            
+            try {
+                const response = await fetch('/api/appointments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('appointmentForm').classList.add('hidden');
+                    document.getElementById('appointmentCode').textContent = result.appointment_code;
+                    document.getElementById('successMessage').classList.remove('hidden');
+                    loadAppointments(); // Refresh the list
+                } else {
+                    showAlert(result.error || 'Failed to create appointment', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.', 'error');
+            } finally {
+                // Reset loading state
+                submitBtn.disabled = false;
+                btnText.style.display = 'inline-block';
+                btnSpinner.style.display = 'none';
+            }
+        });
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        async function logout() {
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+                window.location.href = '/';
+            } catch (error) {
+                window.location.href = '/';
+            }
+        }
+
+        // Set minimum date to today
+        document.getElementById('appointment_date').min = new Date().toISOString().split('T')[0];
+
+        // Load notifications (NEW - SLOT TRACKER)
+        async function loadNotifications() {
+            try {
+                const response = await fetch('/api/appointments/notifications?unread_only=false&limit=5');
+                if (response.ok) {
+                    const data = await response.json();
+                    displayNotifications(data.notifications);
+                }
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+            }
+        }
+
+        function displayNotifications(notifications) {
+            if (notifications.length === 0) {
+                document.getElementById('notificationsPanel').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('notificationsPanel').style.display = 'block';
+            const unreadCount = notifications.filter(n => !n.is_read).length;
+            document.getElementById('unreadCount').textContent = unreadCount;
+
+            const list = document.getElementById('notificationsList');
+            list.innerHTML = notifications.map(n => `
+                <div class="alert alert-${n.type.includes('reminder') ? 'warning' : n.type.includes('completed') ? 'success' : 'info'} mb-2">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <small class="text-muted">${new Date(n.created_at).toLocaleString()}</small>
+                            <p class="mb-0">${n.message}</p>
+                        </div>
+                        ${!n.is_read ? '<span class="badge bg-danger">NEW</span>' : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Load upcoming appointments (NEW - SLOT TRACKER)
+        async function loadUpcoming() {
+            try {
+                const appointments = await slotTracker.getUpcomingAppointments();
+                displayUpcoming(appointments);
+            } catch (error) {
+                console.error('Error loading upcoming appointments:', error);
+            }
+        }
+
+        function displayUpcoming(appointments) {
+            if (appointments.length === 0) {
+                document.getElementById('upcomingPanel').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('upcomingPanel').style.display = 'block';
+            const list = document.getElementById('upcomingList');
+            list.innerHTML = appointments.map(a => `
+                <div class="card mb-2">
+                    <div class="card-body p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">${a.purpose}</h6>
+                                <small class="text-muted">
+                                    <i class="bi bi-person me-1"></i>${a.official_name}
+                                    <i class="bi bi-calendar ms-2 me-1"></i>${new Date(a.appointment_date).toLocaleDateString()}
+                                    <i class="bi bi-clock ms-2 me-1"></i>${a.appointment_time}
+                                </small>
+                            </div>
+                            <span class="badge bg-${a.status === 'in_progress' ? 'warning' : 'primary'}">${a.status}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Make loadDashboardData global for slot tracker
+        window.loadDashboardData = function() {
+            loadAppointments();
+            loadNotifications();
+            loadUpcoming();
+        };
+
+        // Initialize dashboard
+        checkAuth();
+
+        // Initialize slot tracker (NEW - SLOT TRACKER)
+        setTimeout(() => {
+            if (currentUser) {
+                slotTracker.init(currentUser, (notification) => {
+                    // Refresh all data when new notification arrives
+                    loadDashboardData();
+                });
+                
+                // Load initial data
+                loadNotifications();
+                loadUpcoming();
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

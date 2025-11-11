@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Cavendish Appointment System</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-light bg-white fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-cavendish-navy d-flex align-items-center" href="/admin-dashboard">
+                <img src="/logo-removebg-preview.png" alt="Cavendish Logo" height="40" class="me-2">
+                <span>Cavendish Appointments</span>
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted"><i class="bi bi-person-circle me-1"></i><span id="userName">Loading...</span></span>
+                <button class="btn btn-outline-primary btn-sm" onclick="logout()">
+                    <i class="bi bi-box-arrow-right me-1"></i>Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main style="margin-top: 80px; padding: 2rem 0;" class="bg-cavendish-light">
+        <div class="container">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header text-white p-4 mb-4 fade-in">
+                <h1 class="fw-bold mb-2"><i class="bi bi-shield-check me-2"></i>Admin Dashboard</h1>
+                <p class="mb-0">Manage student accounts and monitor all appointments</p>
+            </div>
+
+            <div id="alert" class="alert" style="display: none;" role="alert"></div>
+
+            <!-- Tabs -->
+            <ul class="nav nav-tabs mb-4" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#pendingUsers" type="button" role="tab" onclick="switchTab('pendingUsers')">
+                        <i class="bi bi-person-plus me-1"></i>Pending Users
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="appointments-tab" data-bs-toggle="tab" data-bs-target="#allAppointments" type="button" role="tab" onclick="switchTab('allAppointments')">
+                        <i class="bi bi-calendar3 me-1"></i>All Appointments
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Pending Users Tab -->
+                <div class="tab-pane fade show active" id="pendingUsers" role="tabpanel">
+                    <div class="card slide-in-left">
+                        <div class="card-body">
+                            <h2 class="card-title h4 mb-4 text-cavendish-navy">
+                                <i class="bi bi-person-lines-fill me-2"></i>Pending Student Accounts
+                            </h2>
+                            <div id="pendingUsersList">
+                                <div class="text-center py-5 text-muted">
+                                    <div class="spinner-border" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-3">Loading pending users...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Appointments Tab -->
+                <div class="tab-pane fade" id="allAppointments" role="tabpanel">
+                    <div class="card slide-in-right">
+                        <div class="card-body">
+                            <h2 class="card-title h4 mb-4 text-cavendish-navy">
+                                <i class="bi bi-list-check me-2"></i>All Appointments
+                            </h2>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th><i class="bi bi-hash me-1"></i>Code</th>
+                                            <th><i class="bi bi-person me-1"></i>Student</th>
+                                            <th><i class="bi bi-person-badge me-1"></i>Official</th>
+                                            <th><i class="bi bi-calendar-event me-1"></i>Date & Time</th>
+                                            <th><i class="bi bi-building me-1"></i>Mode</th>
+                                            <th><i class="bi bi-info-circle me-1"></i>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="appointmentsTableBody">
+                                        <tr>
+                                            <td colspan="6" class="text-center py-4">
+                                                <div class="spinner-border" role="status">
+                                                    <span class="visually-hidden">Loading...</span>
+                                                </div>
+                                                <p class="mt-2 mb-0">Loading appointments...</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+<!-- Tabs -->
+<ul class="nav nav-tabs mb-4" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#pendingUsers" type="button" role="tab" onclick="switchTab('pendingUsers')">
+            <i class="bi bi-person-plus me-1"></i>Pending Users
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="appointments-tab" data-bs-toggle="tab" data-bs-target="#allAppointments" type="button" role="tab" onclick="switchTab('allAppointments')">
+            <i class="bi bi-calendar3 me-1"></i>All Appointments
+        </button>
+    </li>
+    <!-- Add Officials Management Tab -->
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="officials-tab" data-bs-toggle="tab" data-bs-target="#officialsManagement" type="button" role="tab" onclick="switchTab('officialsManagement')">
+            <i class="bi bi-person-badge me-1"></i>Officials Management
+        </button>
+    </li>
+</ul>
+<!-- Officials Management Tab -->
+<div class="tab-pane fade" id="officialsManagement" role="tabpanel">
+    <div class="card slide-in-right">
+        <div class="card-body">
+            <h2 class="card-title h4 mb-4 text-cavendish-navy">
+                <i class="bi bi-person-badge me-2"></i>Officials Management
+            </h2>
+            
+            <!-- Create Official Form -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-person-plus me-2"></i>Create New Official</h5>
+                </div>
+                <div class="card-body">
+                    <form id="createOfficialForm" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="officialName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="officialName" placeholder="Enter full name" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="officialTitle" class="form-label">Title/Position</label>
+                            <input type="text" class="form-control" id="officialTitle" placeholder="e.g., Dean of Students" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="officialEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="officialEmail" placeholder="Enter email" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="officialPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="officialPassword" placeholder="Enter password" required>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-person-plus me-1"></i>Create Official
+                            </button>
+                        </div>
+                    </form>
+                    <div id="officialMessage" class="mt-3"></div>
+                </div>
+            </div>
+
+            <!-- Officials List -->
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-people me-2"></i>Existing Officials</h5>
+                </div>
+                <div class="card-body">
+                    <div id="officialsList">
+                        <div class="text-center py-4 text-muted">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2 mb-0">Loading officials...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let currentUser = null;
+
+        // Check authentication and load user data
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/auth/me');
+                if (response.ok) {
+                    const data = await response.json();
+                    currentUser = data.user;
+                    if (currentUser.role !== 'admin') {
+                        window.location.href = '/dashboard';
+                        return;
+                    }
+                    document.getElementById('userName').textContent = currentUser.full_name;
+                    loadPendingUsers();
+                    loadAllAppointments();
+                } else {
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                window.location.href = '/login';
+            }
+        }
+
+        function switchTab(tabName) {
+            // Bootstrap handles tab switching, this is just for additional logic if needed
+        }
+
+        // Load pending users
+        async function loadPendingUsers() {
+            try {
+                const response = await fetch('/api/admin/users?status=pending');
+                if (response.ok) {
+                    const data = await response.json();
+                    displayPendingUsers(data.users);
+                }
+            } catch (error) {
+                console.error('Error loading pending users:', error);
+            }
+        }
+
+        function displayPendingUsers(users) {
+            const container = document.getElementById('pendingUsersList');
+            
+            if (users.length === 0) {
+                container.innerHTML = '<div class="text-center py-4 text-muted"><i class="bi bi-inbox" style="font-size: 3rem;"></i><p class="mt-2">No pending user accounts</p></div>';
+                return;
+            }
+
+            container.innerHTML = users.map(user => `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title text-cavendish-navy"><i class="bi bi-person me-2"></i>${user.full_name}</h5>
+                                <p class="card-text text-muted mb-0">
+                                    <span class="me-3"><i class="bi bi-envelope me-1"></i>${user.email}</span>
+                                    <span><i class="bi bi-calendar-plus me-1"></i>Registered: ${new Date(user.created_at).toLocaleDateString()}</span>
+                                </p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-success btn-sm" onclick="approveUser(${user.id})">
+                                    <i class="bi bi-check-circle me-1"></i>Approve
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="rejectUser(${user.id})">
+                                    <i class="bi bi-x-circle me-1"></i>Reject
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Load all appointments
+        async function loadAllAppointments() {
+            try {
+                const response = await fetch('/api/admin/appointments');
+                if (response.ok) {
+                    const data = await response.json();
+                    displayAllAppointments(data.appointments);
+                }
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+            }
+        }
+
+        function displayAllAppointments(appointments) {
+            const tbody = document.getElementById('appointmentsTableBody');
+            
+            if (appointments.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">No appointments found</td></tr>';
+                return;
+            }
+
+            const statusBadges = {
+                'pending': 'bg-secondary',
+                'approved': 'bg-success',
+                'rejected': 'bg-danger'
+            };
+
+            tbody.innerHTML = appointments.map(appointment => `
+                <tr>
+                    <td><span class="badge bg-light text-dark">${appointment.appointment_code}</span></td>
+                    <td>${appointment.student_name}</td>
+                    <td>${appointment.official_name}</td>
+                    <td>${new Date(appointment.appointment_date).toLocaleDateString()} ${appointment.appointment_time}</td>
+                    <td><i class="bi bi-${appointment.mode === 'Virtual' ? 'camera-video' : 'building'} me-1"></i>${appointment.mode}</td>
+                    <td><span class="badge ${statusBadges[appointment.status]}">${appointment.status.toUpperCase()}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // Approve user
+        async function approveUser(userId) {
+            if (!confirm('Are you sure you want to approve this user?')) return;
+
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/approve`, {
+                    method: 'PUT'
+                });
+
+                if (response.ok) {
+                    showAlert('User approved successfully', 'success');
+                    loadPendingUsers();
+                } else {
+                    const data = await response.json();
+                    showAlert(data.error || 'Failed to approve user', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.', 'error');
+            }
+        }
+
+        // Reject user
+        async function rejectUser(userId) {
+            if (!confirm('Are you sure you want to reject this user?')) return;
+
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/reject`, {
+                    method: 'PUT'
+                });
+
+                if (response.ok) {
+                    showAlert('User rejected successfully', 'success');
+                    loadPendingUsers();
+                } else {
+                    const data = await response.json();
+                    showAlert(data.error || 'Failed to reject user', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.', 'error');
+            }
+        }
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        async function logout() {
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+                window.location.href = '/';
+            } catch (error) {
+                window.location.href = '/';
+            }
+        }
+        // Officials Management Functions
+async function loadOfficials() {
+    try {
+        const response = await fetch('/api/admin/officials');
+        if (!response.ok) throw new Error('Failed to load officials');
+        
+        const data = await response.json();
+        displayOfficials(data.officials);
+    } catch (error) {
+        console.error('Error loading officials:', error);
+        document.getElementById('officialsList').innerHTML = `
+            <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle me-2"></i>Error loading officials. Please try again.
+            </div>
+        `;
+    }
+}
+// Deactivate official
+async function deactivateOfficial(officialId, officialName) {
+    if (!confirm(`Are you sure you want to deactivate ${officialName}? They will not be able to log in.`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/admin/officials/${officialId}/deactivate`, {
+            method: 'PUT'
+        });
+
+        if (response.ok) {
+            showAlert(`Official ${officialName} deactivated successfully`, 'success');
+            loadOfficials(); // Refresh the list
+        } else {
+            const data = await response.json();
+            showAlert(data.error || 'Failed to deactivate official', 'error');
+        }
+    } catch (error) {
+        console.error('Error deactivating official:', error);
+        showAlert('Network error. Please try again.', 'error');
+    }
+}
+
+// Activate official (re-activate a deactivated official)
+async function activateOfficial(officialId, officialName) {
+    if (!confirm(`Are you sure you want to activate ${officialName}? They will be able to log in again.`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/admin/officials/${officialId}/activate`, {
+            method: 'PUT'
+        });
+
+        if (response.ok) {
+            showAlert(`Official ${officialName} activated successfully`, 'success');
+            loadOfficials(); // Refresh the list
+        } else {
+            const data = await response.json();
+            showAlert(data.error || 'Failed to activate official', 'error');
+        }
+    } catch (error) {
+        console.error('Error activating official:', error);
+        showAlert('Network error. Please try again.', 'error');
+    }
+}
+
+// Delete official
+async function deleteOfficial(officialId, officialName) {
+    if (!confirm(`Are you sure you want to permanently delete ${officialName}? This action cannot be undone.`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/admin/officials/${officialId}`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            showAlert(`Official ${officialName} deleted successfully`, 'success');
+            loadOfficials(); // Refresh the list
+        } else {
+            const data = await response.json();
+            showAlert(data.error || 'Failed to delete official', 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting official:', error);
+        showAlert('Network error. Please try again.', 'error');
+    }
+}
+
+function displayOfficials(officials) {
+    const container = document.getElementById('officialsList');
+    
+    if (officials.length === 0) {
+        container.innerHTML = '<div class="text-center py-4 text-muted"><i class="bi bi-people" style="font-size: 3rem;"></i><p class="mt-2">No officials found</p></div>';
+        return;
+    }
+
+    const statusBadges = {
+        'active': 'bg-success',
+        'pending': 'bg-warning',
+        'rejected': 'bg-danger'
+    };
+
+    container.innerHTML = officials.map(official => `
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <h5 class="card-title text-cavendish-navy">
+                            <i class="bi bi-person-badge me-2"></i>${official.full_name}
+                            ${official.title ? `<span class="badge bg-info text-dark ms-2">${official.title}</span>` : ''}
+                        </h5>
+                        <p class="card-text text-muted mb-1">
+                            <i class="bi bi-envelope me-1"></i>${official.email}
+                        </p>
+                        <p class="card-text mb-0">
+                            <span class="badge ${statusBadges[official.status]}">${official.status.toUpperCase()}</span>
+                            <small class="text-muted ms-2">
+                                <i class="bi bi-calendar-plus me-1"></i>Created: ${new Date(official.created_at).toLocaleDateString()}
+                            </small>
+                        </p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        ${official.status === 'active' ? 
+                            `<button class="btn btn-warning btn-sm" onclick="deactivateOfficial(${official.id}, '${official.full_name}')">
+                                <i class="bi bi-person-dash me-1"></i>Deactivate
+                            </button>` : 
+                            `<button class="btn btn-success btn-sm" onclick="activateOfficial(${official.id}, '${official.full_name}')">
+                                <i class="bi bi-person-check me-1"></i>Activate
+                            </button>`
+                        }
+                        <button class="btn btn-danger btn-sm" onclick="deleteOfficial(${official.id}, '${official.full_name}')">
+                            <i class="bi bi-trash me-1"></i>Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Create Official Form Handler
+document.getElementById('createOfficialForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const form = e.target;
+    const messageDiv = document.getElementById('officialMessage');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.innerHTML;
+    
+    const data = {
+        full_name: document.getElementById('officialName').value.trim(),
+        title: document.getElementById('officialTitle').value.trim(),
+        email: document.getElementById('officialEmail').value.trim(),
+        password: document.getElementById('officialPassword').value
+    };
+    
+    // Basic validation
+    if (!data.full_name || !data.title || !data.email || !data.password) {
+        showAlert('Please fill in all fields', 'error');
+        return;
+    }
+    
+    try {
+        // Show loading state
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating...';
+        submitBtn.disabled = true;
+        
+        const response = await fetch('/api/admin/officials', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            messageDiv.innerHTML = '<div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>Official created successfully!</div>';
+            form.reset();
+            loadOfficials(); // Refresh the list
+            showAlert('Official created successfully!', 'success');
+        } else {
+            messageDiv.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-triangle me-2"></i>${result.error || 'Error creating official'}</div>`;
+        }
+    } catch (error) {
+        console.error('Error creating official:', error);
+        messageDiv.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle me-2"></i>Network error. Please try again.</div>';
+    } finally {
+        // Reset button state
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+    }
+});
+
+// Update the switchTab function to handle officials tab
+function switchTab(tabName) {
+    // Bootstrap handles tab switching, this is just for additional logic if needed
+    if (tabName === 'officialsManagement') {
+        loadOfficials();
+    }
+}
+        // Initialize dashboard
+        checkAuth();
+    </script>
+</body>
+</html>

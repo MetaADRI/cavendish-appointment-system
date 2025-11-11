@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cavendish Appointment System</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="/logo-removebg-preview.png" alt="Cavendish Logo" height="40" class="me-2">
+                <span>Cavendish Appointments</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#statistics">Statistics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/availability">Availability</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/signup" class="btn btn-primary ms-2">Sign Up</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-center text-light d-flex align-items-center justify-content-center">
+        <div class="overlay"></div>
+        <div class="content container fade-in">
+            <h1 class="display-4 fw-bold">Cavendish Appointment System</h1>
+            <p class="lead">Book, Manage, and Track Appointments Effortlessly.</p>
+            <p class="mb-4">Experience seamless scheduling with university officials through our modern, efficient platform.</p>
+            <div class="mt-4">
+                <a href="/signup" class="btn btn-primary btn-lg me-3">Get Started</a>
+                <a href="/login" class="btn btn-outline-light btn-lg me-3">Login</a>
+                <a href="/availability" class="btn btn-outline-light btn-lg">
+                    <i class="bi bi-calendar-week me-1"></i>View Availability
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="features" class="py-5">
+        <div class="container">
+            <div class="text-center mb-5 fade-in">
+                <h2 class="fw-bold text-cavendish-navy">How It Works</h2>
+                <p class="text-muted">Our appointment system simplifies scheduling for students, administrators, and university officials.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4 slide-in-left">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <div class="feature-icon">
+                                <i class="bi bi-person-check"></i>
+                            </div>
+                            <h3 class="h5 fw-bold text-cavendish-navy">For Students</h3>
+                            <p class="text-muted">Request appointments with university officials. Track your appointment status and get instant notifications.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 fade-in" style="animation-delay: 0.2s;">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <div class="feature-icon">
+                                <i class="bi bi-briefcase"></i>
+                            </div>
+                            <h3 class="h5 fw-bold text-cavendish-navy">For Officials</h3>
+                            <p class="text-muted">Manage appointment requests efficiently. Approve or reject requests with a single click.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 slide-in-right">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <div class="feature-icon">
+                                <i class="bi bi-gear"></i>
+                            </div>
+                            <h3 class="h5 fw-bold text-cavendish-navy">For Administrators</h3>
+                            <p class="text-muted">Manage student accounts and monitor all appointments across the system.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section id="statistics" class="stats-section">
+        <div class="container">
+            <div class="row text-center justify-content-center">
+                <div class="col-md-5 mb-4 mb-md-0 fade-in">
+                    <div class="stat-card">
+                        <div class="stat-number" id="activeStudentsCount">
+                            <span class="spinner-border spinner-border-sm" role="status"></span>
+                        </div>
+                        <div class="stat-label">Active Students</div>
+                    </div>
+                </div>
+                <div class="col-md-5 mb-4 mb-md-0 fade-in" style="animation-delay: 0.2s;">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalAppointmentsCount">
+                            <span class="spinner-border spinner-border-sm" role="status"></span>
+                        </div>
+                        <div class="stat-label">Appointments Scheduled</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer text-center">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 Cavendish University Zambia. All rights reserved.</p>
+            <p class="text-muted mt-2">Empowering Education Through Innovation</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Fetch and display real statistics
+        async function loadStatistics() {
+            try {
+                const response = await fetch('/api/public/statistics');
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Update Active Students count
+                    const studentsElement = document.getElementById('activeStudentsCount');
+                    studentsElement.textContent = data.activeStudents.toLocaleString();
+                    
+                    // Update Appointments count
+                    const appointmentsElement = document.getElementById('totalAppointmentsCount');
+                    appointmentsElement.textContent = data.totalAppointments.toLocaleString();
+                } else {
+                    // Fallback to placeholder if API fails
+                    document.getElementById('activeStudentsCount').textContent = '--';
+                    document.getElementById('totalAppointmentsCount').textContent = '--';
+                }
+            } catch (error) {
+                console.error('Error loading statistics:', error);
+                // Fallback to placeholder if fetch fails
+                document.getElementById('activeStudentsCount').textContent = '--';
+                document.getElementById('totalAppointmentsCount').textContent = '--';
+            }
+        }
+
+        // Navigation active state and load statistics
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Load real statistics
+            loadStatistics();
+        });
+    </script>
+</body>
+</html>
