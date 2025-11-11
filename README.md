@@ -1,4 +1,4 @@
-# 🎓 Cavendish University Appointment System
+#  Cavendish University Appointment System
 
 A modern, full-featured appointment scheduling system for students, officials, and administrators at Cavendish University Zambia. Built with Node.js, Express, and MySQL.
 
@@ -27,45 +27,45 @@ A modern, full-featured appointment scheduling system for students, officials, a
 
 ---
 
-## ✨ Features
+##  Features
 
 ### For Students
-- ✅ **Book Appointments** with university officials
-- ✅ **Track Status** in real-time (pending, approved, rejected, in-progress, completed)
-- ✅ **View Availability** of all officials (public page)
-- ✅ **Get Reminders** 10 minutes before appointments
-- ✅ **Confirm Presence** via interactive modal
-- ✅ **Receive Notifications** for all appointment updates
+-  **Book Appointments** with university officials
+-  **Track Status** in real-time (pending, approved, rejected, in-progress, completed)
+-  **View Availability** of all officials (public page)
+-  **Get Reminders** 10 minutes before appointments
+-  **Confirm Presence** via interactive modal
+-  **Receive Notifications** for all appointment updates
 
 ### For Officials
-- ✅ **Set Weekly Availability** (Sunday-Saturday)
-- ✅ **Approve/Reject** appointment requests
-- ✅ **View Schedule** with all appointments
-- ✅ **Track Presence** of students
-- ✅ **Get Reminders** and notifications
-- ✅ **Manage Appointments** efficiently
+-  **Set Weekly Availability** (Sunday-Saturday)
+-  **Approve/Reject** appointment requests
+-  **View Schedule** with all appointments
+-  **Track Presence** of students
+-  **Get Reminders** and notifications
+-  **Manage Appointments** efficiently
 
 ### For Administrators
-- ✅ **Manage Users** (students and officials)
-- ✅ **Monitor Appointments** across the system
-- ✅ **View Statistics** (active students, total appointments)
-- ✅ **Track Presence** and partial attendance
-- ✅ **Force-end Appointments** if needed
-- ✅ **Check Scheduler Health**
+-  **Manage Users** (students and officials)
+-  **Monitor Appointments** across the system
+-  **View Statistics** (active students, total appointments)
+-  **Track Presence** and partial attendance
+-  **Force-end Appointments** if needed
+-  **Check Scheduler Health**
 
 ### System Features
-- ⏰ **Fixed Time Slots** (08:30 - 15:30, 30-minute intervals)
-- 🚫 **Double-Booking Prevention** (database-level constraint)
-- 🔔 **Real-Time Notifications** (20-second polling)
-- 📱 **Responsive Design** (mobile-friendly)
-- 🔒 **Secure Authentication** (session-based)
-- 🌍 **Timezone Support** (Africa/Lusaka, UTC+2)
-- 📊 **Audit Trail** (scheduler operations logged)
-- 🎯 **Feature Flag Protection** (safe deployment)
+-  **Fixed Time Slots** (08:30 - 15:30, 30-minute intervals)
+-  **Double-Booking Prevention** (database-level constraint)
+-  **Real-Time Notifications** (20-second polling)
+-  **Responsive Design** (mobile-friendly)
+-  **Secure Authentication** (session-based)
+-  **Timezone Support** (Africa/Lusaka, UTC+2)
+-  **Audit Trail** (scheduler operations logged)
+-  **Feature Flag Protection** (safe deployment)
 
 ---
 
-## 🏗️ System Architecture
+##  System Architecture
 
 ### Technology Stack
 - **Backend**: Node.js + Express.js
@@ -249,7 +249,7 @@ After initialization, you can login with:
 
 ---
 
-## 🎮 Running the Server
+##  Running the Server
 
 ### Start the Server
 ```bash
@@ -284,7 +284,7 @@ http://localhost:3000
 
 ---
 
-## 🔧 Common Issues
+##  Common Issues
 
 ### Issue 1: Port 3000 Already in Use
 
@@ -553,7 +553,7 @@ cavendish-appointment-system/
 
 ---
 
-## 🔐 Environment Variables
+##  Environment Variables
 
 ### Required Variables
 ```env
@@ -587,7 +587,7 @@ SESSION_DURATION_MINUTES=30    # Appointment duration
 
 ---
 
-## 🧪 Testing
+##  Testing
 
 ### Manual Testing
 
@@ -670,7 +670,7 @@ pm2 start server.js --name cavendish-appointments
 
 ---
 
-## 🔄 Maintenance
+##  Maintenance
 
 ### Database Backup
 ```bash
@@ -701,7 +701,7 @@ curl http://localhost:3000/api/admin/scheduler-status
 
 ---
 
-## 📊 Database Schema
+##  Database Schema
 
 ### Core Tables
 
@@ -754,7 +754,7 @@ curl http://localhost:3000/api/admin/scheduler-status
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 ### Development Workflow
 1. Create feature branch
@@ -770,13 +770,13 @@ curl http://localhost:3000/api/admin/scheduler-status
 
 ---
 
-## 📝 License
+##  License
 
 This project is licensed under the MIT License.
 
 ---
 
-## 📞 Support
+##  Support
 
 ### Documentation
 - `SLOT_TRACKER_IMPLEMENTATION.md` - Technical details
@@ -810,7 +810,7 @@ netstat -ano | findstr :3000
 
 ---
 
-## 🎯 Quick Start Summary
+##  Quick Start Summary
 
 ```bash
 # 1. Install dependencies
@@ -835,9 +835,9 @@ npm start
 
 ---
 
-## 🏆 Features Roadmap
+##  Features Roadmap
 
-### Completed ✅
+### Completed 
 - User authentication and authorization
 - Appointment booking and management
 - Official availability tracking
@@ -847,7 +847,7 @@ npm start
 - Double-booking prevention
 - Admin dashboard
 
-### Future Enhancements 🔮
+### Future Enhancements 
 - Email notifications
 - SMS reminders
 - WebSocket real-time updates
@@ -859,7 +859,7 @@ npm start
 
 ---
 
-## ⚡ Performance
+##  Performance
 
 - **Server Response**: < 100ms average
 - **Database Queries**: Optimized with indexes
